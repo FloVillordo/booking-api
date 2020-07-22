@@ -36,6 +36,7 @@ import java.util.concurrent.Executors;
         SpringBootTest.WebEnvironment.MOCK,
         classes = BookingApiApplication.class)
 public class ConcurrencyIntegrationTest {
+
     @ClassRule
     public static PostgreSQLContainer postgreSQLContainer = BookingPostgresqlContainer.getInstance();
     private MockMvc mvc;
@@ -65,7 +66,7 @@ public class ConcurrencyIntegrationTest {
             threadList.add(new Thread(creationBooking));
         }
         this.runThreads(threadList);
-        Assert.assertEquals(this.bookingRepository.findByUserName("Pepe Pepito"), 1);
+        Assert.assertEquals(this.bookingRepository.findByUserName("Fercho Recalt"), 1);
 
     }
 
