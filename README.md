@@ -3,8 +3,14 @@
 Booking API for manage bookings
 =======
 
+###Documentation
 
-1. Clone the repository
-2. Install and Run Docker in your local machine
-3. Run ``` docker-compose up ``` to start the application
+http://localhost:8080/swagger-ui.html
+
+###Run application
+
+```
+./mvnw spring-boot:run
+```
+
 
