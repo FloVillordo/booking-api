@@ -6,8 +6,6 @@ import com.island.reservationapi.request.CreateBookingControllerRequest;
 import com.island.reservationapi.request.UpdateBookingControllerRequest;
 import com.island.reservationapi.service.BookingService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +24,6 @@ public class BookingController {
 
 
     private final BookingService bookingService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(BookingController.class);
 
 
     @GetMapping(value = "/{id}")

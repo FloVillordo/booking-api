@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -27,6 +28,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 @RunWith(SpringRunner.class)
+@SpringBootTest
 @ContextConfiguration(classes = BookingApiApplication.class)
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class BookingServiceTest {
@@ -130,7 +132,7 @@ public class BookingServiceTest {
      * Update an existent booking with available dates
      */
     @Test
-    public void whenUpdateExitingBooking_thenBookingShouldUpdate() {
+    public void whenUpdateExitingBooking_thenBookingShouldUpdateTest() {
         long bookingId = 3;
         String userName = "Pepito Juarez";
         String userEmail = "pepito@gmail.com";
@@ -156,7 +158,7 @@ public class BookingServiceTest {
      * Update an existent booking with unavailable dates
      */
     @Test
-    public void whenUpdateExitingBookingWithUnavailableDate_thenBookingShouldUpdate() {
+    public void whenUpdateExitingBookingWithUnavailableDate_thenBookingShouldUpdateTest() {
         long bookingId = 3;
         String userName = "Pepito Juarez";
         String userEmail = "pepito@gmail.com";

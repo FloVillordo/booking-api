@@ -1,7 +1,6 @@
 package com.island.reservationapi.service;
 
 
-import com.island.reservationapi.BookingApiApplication;
 import com.island.reservationapi.repository.BookingRepository;
 import com.island.reservationapi.repository.CalendarAvailableRepository;
 import org.junit.Assert;
@@ -11,8 +10,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
@@ -22,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = BookingApiApplication.class)
+@SpringBootTest
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 public class AvailabilityServiceTest {
 
@@ -35,9 +34,7 @@ public class AvailabilityServiceTest {
     @Autowired
     private AvailabilityService availabilityService;
 
-    /**
-     * Check available range of dates
-     */
+
     @Test
     public void whenAvailableDates_thenReturnAllDates() {
         LocalDate from = LocalDate.now().plusDays(1);

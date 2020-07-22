@@ -37,7 +37,7 @@ public class BookingService {
      * @return Booking
      */
     @Transactional
-    public synchronized Booking createBooking(CreateBookingControllerRequest request) {
+    public Booking createBooking(CreateBookingControllerRequest request) {
         this.checkBookedDates(request.getArrivalDate(), request.getDepartureDate());
         // save booking
         Booking booking = new Booking(request.getUserName(), request.getUserEmail(), request.getArrivalDate(),
@@ -55,7 +55,7 @@ public class BookingService {
      * @return Booking
      */
     @Transactional
-    public synchronized Booking updateBooking(UpdateBookingControllerRequest request, Long bookingId) {
+    public Booking updateBooking(UpdateBookingControllerRequest request, Long bookingId) {
         Booking persistedBooking = this.getPersistedBooking(bookingId);
         this.checkBookedDates(request.getArrivalDate(), request.getDepartureDate(), persistedBooking);
         if (persistedBooking.getStatus().equals(BookingStatus.CANCEL.getId())) {
@@ -126,10 +126,11 @@ public class BookingService {
     }
 
     private void saveBooking(Booking booking) {
-        this.bookingRepository.save(booking);
         List<LocalDate> bookingDates = booking.getArrivalDate().datesUntil(booking.getDepartureDate()).collect(Collectors.toList());
         List<CalendarAvailability> calendarAvailabilities = bookingDates.stream().map(CalendarAvailability::new).collect(Collectors.toList());
         this.calendarAvailableRepository.saveAll(calendarAvailabilities);
+        this.bookingRepository.save(booking);
+
     }
 
     private void cancelBookingDays(Booking booking) {

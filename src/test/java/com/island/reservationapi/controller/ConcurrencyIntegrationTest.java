@@ -3,10 +3,8 @@ package com.island.reservationapi.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.island.reservationapi.BookingApiApplication;
 import com.island.reservationapi.repository.BookingRepository;
 import com.island.reservationapi.request.CreateBookingControllerRequest;
-import database.BookingPostgresqlContainer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -14,7 +12,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -32,13 +34,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment =
-        SpringBootTest.WebEnvironment.MOCK,
-        classes = BookingApiApplication.class)
+@SpringBootTest
+@ContextConfiguration(initializers = {ConcurrencyIntegrationTest.Initializer.class})
 public class ConcurrencyIntegrationTest {
 
     @ClassRule
-    public static PostgreSQLContainer postgreSQLContainer = BookingPostgresqlContainer.getInstance();
+    public static PostgreSQLContainer postgreSQLContainer =
+            (PostgreSQLContainer) new PostgreSQLContainer("postgres:11.1")
+                    .withDatabaseName("sampledb")
+                    .withUsername("sampleuser")
+                    .withPassword("samplepwd");
+
     private MockMvc mvc;
 
     @Autowired
@@ -59,7 +65,7 @@ public class ConcurrencyIntegrationTest {
 
     @Test
     @Transactional
-    public void checkConcurrencySameReservation() throws InterruptedException {
+    public void testSameBookingConcurrency() throws InterruptedException {
         Runnable creationBooking = this.getRunnable("Fercho Recalt", "pepe@gmail.com", LocalDate.now().plusDays(10), LocalDate.now().plusDays(12));
         List<Thread> threadList = new ArrayList<>();
         for (int i = 0; i < 15; i++) {
@@ -72,17 +78,19 @@ public class ConcurrencyIntegrationTest {
 
     @Test
     @Transactional
-    public void checkConcurrencySeveralReservation() throws InterruptedException {
+    public void testSeveralReservationConcurrency() throws InterruptedException {
         int bookingBeforeTest = this.bookingRepository.findAll().size();
         Runnable creationBookingUser1 = this.getRunnable("Pepe Pepito", "pepe@gmail.com", LocalDate.now().plusDays(15), LocalDate.now().plusDays(16));
         Runnable creationBookingUser2 = this.getRunnable("Juan PEPE", "juanpepe@gmail.com", LocalDate.now().plusDays(16), LocalDate.now().plusDays(18));
-        Runnable creationBookingUser3 = this.getRunnable("Zac Efron", "zacefrom@gmail.com", LocalDate.now().plusDays(19), LocalDate.now().plusDays(21));
+        Runnable creationBookingUser3 = this.getRunnable("Zac Efron", "zacefrom@gmail.com", LocalDate.now().plusDays(20), LocalDate.now().plusDays(21));
+        Runnable creationBookingUser4 = this.getRunnable("Gabriela Montes", "gabymontes@gmail.com", LocalDate.now().plusDays(24), LocalDate.now().plusDays(26));
         List<Thread> threadList = new ArrayList<>();
         threadList.add(new Thread(creationBookingUser1));
         threadList.add(new Thread(creationBookingUser2));
         threadList.add(new Thread(creationBookingUser3));
+        threadList.add(new Thread(creationBookingUser4));
         this.runThreads(threadList);
-        Assert.assertEquals(this.bookingRepository.findAll().size(), bookingBeforeTest + 3);
+        Assert.assertEquals(this.bookingRepository.findAll().size(), bookingBeforeTest + 4);
 
     }
 
@@ -97,7 +105,7 @@ public class ConcurrencyIntegrationTest {
 
     @Test
     @Transactional
-    public void testSummationWithConcurrency() throws InterruptedException {
+    public void testSameBookingCreationConcurrency() throws InterruptedException {
         int bookingBeforeTest = this.bookingRepository.findAll().size();
         int numberOfThreads = 100;
         ExecutorService service = Executors.newFixedThreadPool(numberOfThreads);
@@ -106,7 +114,7 @@ public class ConcurrencyIntegrationTest {
         for (int i = 0; i < numberOfThreads; i++) {
             service.submit(() -> {
                 try {
-                    this.getBooking("Pepe Pepito", "pepe@gmail.com", LocalDate.now().plusDays(22), LocalDate.now().plusDays(25));
+                    this.getBooking("Pepe Pepito", "pepe@gmail.com", LocalDate.now().plusDays(27), LocalDate.now().plusDays(28));
                 } catch (Exception e) {
                 }
                 latch.countDown();
@@ -137,5 +145,15 @@ public class ConcurrencyIntegrationTest {
         mvcResult.getResponse();
     }
 
-
+    static class Initializer
+            implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        @Override
+        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
+            TestPropertyValues.of(
+                    "spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
+                    "spring.datasource.username=" + postgreSQLContainer.getUsername(),
+                    "spring.datasource.password=" + postgreSQLContainer.getPassword()
+            ).applyTo(configurableApplicationContext.getEnvironment());
+        }
+    }
 }
