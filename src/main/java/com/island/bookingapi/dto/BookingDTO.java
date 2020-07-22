@@ -29,4 +29,6 @@ public class BookingDTO {
 
     private LocalDateTime updatedAt;
 
+    private BookingStatus bookingStatus;
+
 }

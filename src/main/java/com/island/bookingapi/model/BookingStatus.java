@@ -1,8 +1,14 @@
 package com.island.bookingapi.model;
 
+import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.Optional;
+
+@Getter
 public enum BookingStatus {
     ACTIVE(0),
-    CANCEL(1);
+    CANCELLED(1);
 
     Integer id;
 
@@ -10,31 +16,13 @@ public enum BookingStatus {
         this.id = id;
     }
 
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(final Integer id) {
-        this.id = id;
-    }
-
-    /**
-     * Return BookingStatus by id
-     *
-     * @param id
-     * @return BookingStatus
-     */
-    public BookingStatus getBookingStatusById(Integer id) {
+    public static BookingStatus getBookingStatusById(Integer id) {
         if (id != null) {
-            for (BookingStatus status : BookingStatus.values()) {
-                if (status.id.equals(id)) {
-                    return status;
-                }
+            Optional<BookingStatus> bookingStatus = Arrays.stream(BookingStatus.values()).filter(v -> v.getId().equals(id)).findFirst();
+            if (Arrays.stream(BookingStatus.values()).anyMatch(v -> v.getId().equals(id))) {
+                return bookingStatus.get();
             }
         }
         return null;
-
     }
-
-
 }

@@ -2,6 +2,7 @@ package com.island.bookingapi.controller;
 
 import com.island.bookingapi.dto.BookingDTO;
 import com.island.bookingapi.model.Booking;
+import com.island.bookingapi.model.BookingStatus;
 import com.island.bookingapi.request.CreateBookingControllerRequest;
 import com.island.bookingapi.request.UpdateBookingControllerRequest;
 import com.island.bookingapi.service.BookingService;
@@ -54,7 +55,8 @@ public class BookingController {
 
     private BookingDTO transformResponse(Booking booking) {
         return BookingDTO.builder().bookingId(booking.getId()).userName(booking.getUserName()).userEmail(booking.getUserEmail())
-                .arrivalDate(booking.getArrivalDate()).departureDate(booking.getDepartureDate()).createdAt(booking.getCreatedAt()).updatedAt(booking.getUpdatedAt()).build();
+                .arrivalDate(booking.getArrivalDate()).departureDate(booking.getDepartureDate()).createdAt(booking.getCreatedAt())
+                .updatedAt(booking.getUpdatedAt()).status(BookingStatus.getBookingStatusById(booking.getStatus())).build();
     }
 
 }

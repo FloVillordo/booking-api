@@ -32,6 +32,11 @@ public class BookingService {
 
     /**
      * Create and returns a Booking If the days are available.
+     * <p>
+     * This method can be accessed concurrently, thread-safety
+     * different thread can try to book the same days but only the
+     * first its books the day will create the booking
+     * all other transactions will be rolled back and will not be saved in the db
      *
      * @param request
      * @return Booking
@@ -49,6 +54,11 @@ public class BookingService {
 
     /**
      * Update an existing booking
+     * <p>
+     * This method can be accessed concurrently, thread-safety
+     * different thread can try to update different exiting booking for the same date but only the
+     * first its books the date will update the booking
+     * all other transactions will be rolled back and will not be saved in the db
      *
      * @param request
      * @param bookingId
@@ -58,13 +68,13 @@ public class BookingService {
     public Booking updateBooking(UpdateBookingControllerRequest request, Long bookingId) {
         Booking persistedBooking = this.getPersistedBooking(bookingId);
         this.checkBookedDates(request.getArrivalDate(), request.getDepartureDate(), persistedBooking);
-        if (persistedBooking.getStatus().equals(BookingStatus.CANCEL.getId())) {
+        if (persistedBooking.getStatus().equals(BookingStatus.CANCELLED.getId())) {
             throw new CancelledBookingException();
         }
         this.cancelBookingDays(persistedBooking);
-        String newUserName = request.getUserEmail();
+        String newUserName = request.getUserName();
         if (newUserName != null) {
-            persistedBooking.setUserEmail(newUserName);
+            persistedBooking.setUserName(newUserName);
         }
         String newEmail = request.getUserEmail();
         if (newEmail != null) {
@@ -97,10 +107,10 @@ public class BookingService {
     @Transactional
     public Booking cancelBooking(Long bookingId) {
         Booking persistedBooking = this.getPersistedBooking(bookingId);
-        if (persistedBooking.getStatus().equals(BookingStatus.CANCEL.getId())) {
+        if (persistedBooking.getStatus().equals(BookingStatus.CANCELLED.getId())) {
             throw new CancelledBookingException();
         }
-        persistedBooking.setStatus(BookingStatus.CANCEL.getId());
+        persistedBooking.setStatus(BookingStatus.CANCELLED.getId());
         LOGGER.info("Cancelling booking {} ", bookingId);
         this.cancelBookingDays(persistedBooking);
         return this.bookingRepository.save(persistedBooking);

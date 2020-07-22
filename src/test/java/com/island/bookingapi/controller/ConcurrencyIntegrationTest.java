@@ -57,7 +57,7 @@ public class ConcurrencyIntegrationTest {
 
     @Test
     @Transactional
-    public void testSameBookingConcurrency() throws InterruptedException {
+    public void whenBookSameBookingSeveralTimes_bookOnlyOnce() throws InterruptedException {
         Runnable creationBooking = this.getRunnable("Fercho Recalt", "pepe@gmail.com", LocalDate.now().plusDays(10), LocalDate.now().plusDays(12));
         List<Thread> threadList = new ArrayList<>();
         for (int i = 0; i < 15; i++) {
@@ -70,7 +70,7 @@ public class ConcurrencyIntegrationTest {
 
     @Test
     @Transactional
-    public void testSeveralReservationConcurrency() throws InterruptedException {
+    public void whenBookDifferentBookings_bookAllBookings() throws InterruptedException {
         int bookingBeforeTest = this.bookingRepository.findAll().size();
         Runnable creationBookingUser1 = this.getRunnable("Pepe Pepito", "pepe@gmail.com", LocalDate.now().plusDays(15), LocalDate.now().plusDays(16));
         Runnable creationBookingUser2 = this.getRunnable("Juan PEPE", "juanpepe@gmail.com", LocalDate.now().plusDays(16), LocalDate.now().plusDays(18));
@@ -86,18 +86,9 @@ public class ConcurrencyIntegrationTest {
 
     }
 
-    private void runThreads(List<Thread> threadList) throws InterruptedException {
-        for (Thread t : threadList) {
-            t.start();
-        }
-        for (Thread t : threadList) {
-            t.join();
-        }
-    }
-
     @Test
     @Transactional
-    public void testSameBookingCreationConcurrency() throws InterruptedException {
+    public void whenBookSameBookingSeveralTimes_OnlyBookOnce() throws InterruptedException {
         int bookingBeforeTest = this.bookingRepository.findAll().size();
         int numberOfThreads = 100;
         ExecutorService service = Executors.newFixedThreadPool(numberOfThreads);
@@ -124,10 +115,18 @@ public class ConcurrencyIntegrationTest {
                 try {
                     ConcurrencyIntegrationTest.this.getBooking(fullName, email, from, to);
                 } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
         };
+    }
+
+    private void runThreads(List<Thread> threadList) throws InterruptedException {
+        for (Thread t : threadList) {
+            t.start();
+        }
+        for (Thread t : threadList) {
+            t.join();
+        }
     }
 
     private void getBooking(String fullName, String email, LocalDate from, LocalDate to) throws Exception {

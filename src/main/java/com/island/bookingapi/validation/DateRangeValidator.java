@@ -19,6 +19,13 @@ public class DateRangeValidator implements ConstraintValidator<ValidateDateRange
         this.departureDate = constraintAnnotation.departureDate();
     }
 
+    /**
+     * Validates that the given dates range is valid
+     *
+     * @param value
+     * @param context
+     * @return {@code false} if {@code value} does not pass the constraint
+     */
     @Override
     public boolean isValid(final Object value, final ConstraintValidatorContext context) {
         if (value == null)
@@ -46,13 +53,13 @@ public class DateRangeValidator implements ConstraintValidator<ValidateDateRange
 
         if (ChronoUnit.DAYS.between(arrival, departure) > MAX_STAY) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate("Stay can not be more than 3 days").addConstraintViolation();
+            context.buildConstraintViolationWithTemplate("Stay cannot be more than 3 days").addConstraintViolation();
             return false;
         }
         LocalDate now = LocalDate.now();
         if (now.compareTo(arrival) > 0) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(String.format("Arrival date must be greater than %s", now.toString())).addConstraintViolation();
+            context.buildConstraintViolationWithTemplate("Arrival date must be greater today").addConstraintViolation();
             return false;
         }
         LocalDate limitLocalDate = now.plusDays(BOOKING_ANTICIPATION_DAYS);

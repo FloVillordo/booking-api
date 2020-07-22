@@ -116,10 +116,10 @@ public class BookingServiceTest {
 
 
     @Test
-    public void whenUpdateExitingBooking_thenBookingShouldUpdateTest() {
+    public void whenUpdateExitingBooking_thenBookingShouldUpdate() {
         long bookingId = 3;
-        String userName = "Pepito Juarez";
-        String userEmail = "pepito@gmail.com";
+        String userName = "Pepito";
+        String userEmail = "pepito123@gmail.com";
         LocalDate arrivalDate = LocalDate.now().plusDays(5);
         LocalDate departureDate = LocalDate.now().plusDays(6);
         Booking booking = new Booking(userName, userEmail, arrivalDate, departureDate);
@@ -140,7 +140,7 @@ public class BookingServiceTest {
 
 
     @Test
-    public void whenUpdateExitingBookingWithUnavailableDate_thenBookingShouldUpdateTest() {
+    public void whenUpdateExitingBookingWithUnavailableDate_thenBookingShouldUpdate() {
         long bookingId = 3;
         String userName = "Pepito Juarez";
         String userEmail = "pepito@gmail.com";
