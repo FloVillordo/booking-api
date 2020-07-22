@@ -1,13 +1,14 @@
 
 
-Booking API for manage bookings
-=======
+# Booking API
+API for manage bookings
 
-###Documentation
+
+## Documentation
 
 http://localhost:8080/swagger-ui.html
 
-###Run application
+## Run application
 
 ```
 ./mvnw spring-boot:run
