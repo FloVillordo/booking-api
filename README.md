@@ -3,10 +3,9 @@
 # Booking API
 API for manage bookings
 
+## Requirements
 
-## Documentation
-
-http://localhost:8080/swagger-ui.html
+PostgreSQL database must be installed and running
 
 ## Run application
 
@@ -14,4 +13,7 @@ http://localhost:8080/swagger-ui.html
 ./mvnw spring-boot:run
 ```
 
+## Documentation
+
+http://localhost:8080/swagger-ui.html
 
