@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <spring-boot-starter.version>2.3.1.RELEASE</spring-boot-starter.version>
+        <spring-boot-starter.version>2.5.12</spring-boot-starter.version>
         <org.postgresql.version>42.2.12</org.postgresql.version>
         <junit.version>4.13</junit.version>
         <h2.version>1.4.200</h2.version>
